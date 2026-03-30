@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Seoul Murmur</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Noto+Sans+JP:wght@300;400&family=Space+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Noto+Sans+JP:wght@300;400&family=Space+Mono&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --cream: #F4EFE4;
+    --cream: #EDEAE2;
     --ink: #1C1C1A;
     --sage: #7A9E7E;
     --dusty-orange: #C8714E;
     --muted-pink: #D4A5A0;
     --warm-yellow: #D4B96A;
-    --paper: #EDE8DB;
+    --paper: #E4E0D6;
     --faint: #9B9589;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -46,12 +46,13 @@
     background: transparent;
   }
   nav.scrolled {
-    background: rgba(244,239,228,0.95);
+    background: rgba(237,234,226,0.95);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid rgba(28,28,26,0.08);
   }
   .logo {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
     font-size: 14px;
     letter-spacing: 0.05em;
     color: var(--ink);
@@ -97,7 +98,8 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 120px 60px 80px 80px;
+    padding: 140px 120px 100px 120px;
+    max-width: 900px;
     position: relative;
     z-index: 2;
   }
@@ -107,17 +109,18 @@
     color: var(--faint);
     text-transform: uppercase;
     margin-bottom: 24px;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
   }
   .hero-title {
-    font-family: 'Noto Serif JP', serif;
-    font-size: clamp(48px, 7vw, 88px);
-    font-weight: 300;
+    font-family: 'Barlow', sans-serif;
+    font-size: clamp(28px, 4.5vw, 64px);
+    font-weight: 400;
     line-height: 1.1;
     letter-spacing: -0.02em;
     margin-bottom: 32px;
+    white-space: nowrap;
   }
-  .hero-title .accent { color: var(--dusty-orange); font-style: italic; }
+  .hero-title .accent { color: var(--dusty-orange); font-style: normal; }
   .hero-title .small-text {
     display: block;
     font-size: 0.38em;
@@ -127,6 +130,7 @@
     margin-top: 8px;
     font-family: 'Noto Sans JP', sans-serif;
     font-weight: 300;
+    white-space: normal;
   }
   .hero-desc {
     font-size: 13px;
@@ -159,41 +163,8 @@
   .btn-ghost:hover { color: var(--ink); }
   .hero-right {
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow: hidden;
   }
-  .hero-circle {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 480px; height: 480px;
-    border-radius: 50%;
-    background: var(--paper);
-    z-index: 0;
-  }
-  .hero-svg {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
-    width: 380px;
-    animation: floatSlow 6s ease-in-out infinite;
-  }
-  @keyframes floatSlow {
-    0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
-    50% { transform: translate(-50%, -50%) translateY(-12px); }
-  }
-  .hero-tag {
-    position: absolute;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: var(--faint);
-    font-family: 'Space Mono', monospace;
-  }
-  .hero-tag-1 { top: 20%; right: 8%; }
-  .hero-tag-2 { bottom: 28%; left: 4%; }
-  .hero-tag-3 { bottom: 18%; right: 12%; }
   .scroll-hint {
     position: absolute;
     bottom: 40px; left: 80px;
@@ -203,7 +174,7 @@
     font-size: 10px;
     letter-spacing: 0.2em;
     color: var(--faint);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
   }
   .scroll-hint::before {
     content: '';
@@ -233,7 +204,7 @@
     font-size: 11px;
     letter-spacing: 0.2em;
     color: var(--cream);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
     flex-shrink: 0;
   }
   .marquee-track .dot { color: var(--dusty-orange); }
@@ -253,7 +224,7 @@
     letter-spacing: 0.3em;
     color: var(--faint);
     text-transform: uppercase;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
     writing-mode: vertical-rl;
     align-self: center;
   }
@@ -295,7 +266,7 @@
   .categories-count {
     font-size: 10px;
     color: var(--faint);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
     letter-spacing: 0.1em;
   }
   .categories-grid {
@@ -320,7 +291,7 @@
   .cat-card:nth-child(2) { background: var(--sage); }
   .cat-card:nth-child(2):hover { background: var(--ink); }
   .cat-number {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
     font-size: 11px;
     color: var(--faint);
     margin-bottom: 40px;
@@ -383,7 +354,7 @@
     font-size: 10px;
     letter-spacing: 0.3em;
     color: rgba(244,239,228,0.4);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
   }
   .featured-title {
     font-family: 'Noto Serif JP', serif;
@@ -409,7 +380,7 @@
     font-size: 9px;
     letter-spacing: 0.25em;
     color: rgba(244,239,228,0.5);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
     margin-bottom: 20px;
     display: block;
     text-transform: uppercase;
@@ -446,7 +417,7 @@
     gap: 6px;
     font-size: 10px;
     color: rgba(244,239,228,0.4);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
     margin-top: 20px;
     letter-spacing: 0.1em;
   }
@@ -463,7 +434,7 @@
     letter-spacing: 0.3em;
     color: var(--faint);
     text-transform: uppercase;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
     margin-bottom: 24px;
   }
   .membership-title {
@@ -487,7 +458,7 @@
     font-size: 11px;
     letter-spacing: 0.15em;
     color: var(--faint);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
     border-top: 1px solid rgba(28,28,26,0.15);
     padding-top: 20px;
     margin-bottom: 32px;
@@ -527,7 +498,7 @@
     font-size: 10px;
     letter-spacing: 0.2em;
     color: var(--dusty-orange);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
   }
   .secret-emoji { font-size: 32px; margin-bottom: 20px; display: block; }
   .secret-title {
@@ -555,7 +526,7 @@
     padding: 8px 16px;
     font-size: 10px;
     letter-spacing: 0.15em;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
     transform: rotate(-2deg);
   }
   .about-strip {
@@ -579,7 +550,7 @@
     line-height: 2;
     color: var(--faint);
     letter-spacing: 0.08em;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
   }
   footer {
     background: var(--ink);
@@ -591,7 +562,7 @@
     align-items: start;
   }
   .footer-logo {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
     font-size: 16px;
     letter-spacing: 0.05em;
     margin-bottom: 16px;
@@ -615,7 +586,7 @@
     font-size: 10px;
     letter-spacing: 0.25em;
     color: rgba(244,239,228,0.4);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
     margin-bottom: 20px;
     text-transform: uppercase;
   }
@@ -636,7 +607,7 @@
     justify-content: space-between;
     font-size: 10px;
     color: rgba(244,239,228,0.25);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Barlow', sans-serif;
     letter-spacing: 0.1em;
   }
   .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
@@ -657,13 +628,14 @@
   <div class="hero-left">
     <p class="hero-eyebrow">KOREA CURATION FOR JAPANESE WOMEN</p>
     <h1 class="hero-title">
-      Seoul<br>
-      <span class="accent">Murmur</span>
-      <span class="small-text">こそっと,ソウル — 知る人ぞ知る、あの国の話</span>
+      Seoul <span class="accent">Murmur</span>
+      <span class="small-text">こそっと,ソウル</span>
     </h1>
     <p class="hero-desc">
-      ガイドブックには載っていない。<br>でも、韓国をほんとうに好きな人なら知ってる。<br><br>
-      現地在住の友だちが耳打ちしてくれるような<br>ローカルな韓国のかけらを、ここに集めました。
+      ガイドブックには載っていない。<br>
+      でも、韓国をほんとうに好きな人なら知ってる。<br><br>
+      現地在住の友だちが耳打ちしてくれるような<br>
+      ローカルな韓国のかけらを、ここに集めました。
     </p>
     <div class="hero-cta-group">
       <a href="#categories" class="btn-primary">さっそく覗く</a>
@@ -671,37 +643,7 @@
     </div>
   </div>
   <div class="hero-right">
-    <div class="hero-circle"></div>
-    <svg class="hero-svg" viewBox="0 0 360 380" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M175 220 C160 220 148 235 145 255 C142 275 144 300 150 318 C155 330 165 338 178 338 C191 338 201 330 206 318 C212 300 214 275 211 255 C208 235 196 220 181 220 Z" stroke="#1C1C1A" stroke-width="2" fill="#EDE8DB"/>
-      <ellipse cx="178" cy="185" rx="38" ry="42" stroke="#1C1C1A" stroke-width="2" fill="#EDE8DB"/>
-      <path d="M142 172 C138 155 140 138 150 128 C158 120 168 116 178 116 C188 116 200 120 207 130 C215 140 215 156 212 170" stroke="#1C1C1A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      <ellipse cx="167" cy="182" rx="5" ry="4" fill="#1C1C1A"/>
-      <ellipse cx="189" cy="182" rx="5" ry="4" fill="#1C1C1A"/>
-      <path d="M172 206 C174 209 177 210 178 210 C179 210 182 209 184 206" stroke="#1C1C1A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <path d="M148 240 C136 238 118 232 104 228" stroke="#1C1C1A" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M208 240 C220 244 234 254 244 260" stroke="#1C1C1A" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <rect x="242" y="255" width="28" height="22" rx="2" stroke="#1C1C1A" stroke-width="1.8" fill="#F4EFE4"/>
-      <path d="M270 263 C275 263 278 265 278 268 C278 271 275 273 270 273" stroke="#1C1C1A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <path d="M250 252 C249 248 251 244 250 240" stroke="#C8714E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <path d="M256 252 C255 247 257 243 256 238" stroke="#C8714E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <path d="M262 252 C261 248 263 244 262 240" stroke="#C8714E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <path d="M90 228 C86 230 82 232 80 238 C78 246 79 256 82 262 C85 268 90 270 96 270 C102 270 107 268 110 262 C113 256 114 246 112 238 C110 232 106 230 102 228 Z" stroke="#1C1C1A" stroke-width="1.8" fill="#F4EFE4"/>
-      <path d="M90 228 C90 220 96 216 96 216 C96 216 102 220 102 228" stroke="#1C1C1A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <text x="88" y="252" font-size="7" fill="#7A9E7E" font-family="serif" letter-spacing="0.5">서울</text>
-      <path d="M150 318 C148 330 148 345 152 355" stroke="#1C1C1A" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M206 318 C208 330 208 345 204 355" stroke="#1C1C1A" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <ellipse cx="152" cy="356" rx="12" ry="5" stroke="#1C1C1A" stroke-width="1.5" fill="#1C1C1A"/>
-      <ellipse cx="204" cy="356" rx="12" ry="5" stroke="#1C1C1A" stroke-width="1.5" fill="#1C1C1A"/>
-      <path d="M68 160 L70 154 L72 160 L78 162 L72 164 L70 170 L68 164 L62 162 Z" stroke="#D4B96A" stroke-width="1.2" fill="#D4B96A" opacity="0.7"/>
-      <path d="M290 130 L291.5 125 L293 130 L298 131.5 L293 133 L291.5 138 L290 133 L285 131.5 Z" stroke="#7A9E7E" stroke-width="1" fill="#7A9E7E" opacity="0.6"/>
-      <circle cx="310" cy="175" r="3" fill="#C8714E" opacity="0.5"/>
-      <circle cx="55" cy="210" r="2" fill="#7A9E7E" opacity="0.5"/>
-      <circle cx="178" cy="200" r="155" stroke="#1C1C1A" stroke-width="1" stroke-dasharray="4 6" fill="none" opacity="0.15"/>
-    </svg>
-    <span class="hero-tag hero-tag-1">📍 서울, 성수</span>
-    <span class="hero-tag hero-tag-2">핫플 · 찐맛집</span>
-    <span class="hero-tag hero-tag-3">くらしの中の韓国</span>
+    <img src="https://raw.githubusercontent.com/ohyesjy/seoul-murmur/main/IMG_9409.jpeg" alt="" style="width:100%; height:100%; object-fit:cover; opacity:0.85;"/>
   </div>
   <div class="scroll-hint">SCROLL</div>
 </section>
@@ -818,12 +760,7 @@
   <div class="featured-grid">
     <div class="pick-card main">
       <span class="pick-tag">CAFÉ · 성수동</span>
-      <div class="pick-image-placeholder">
-        <svg viewBox="0 0 200 100" fill="none" width="180">
-          <rect x="20" y="20" width="160" height="60" rx="4" stroke="rgba(244,239,228,0.4)" stroke-width="1" fill="rgba(244,239,228,0.08)"/>
-          <text x="85" y="55" font-size="9" fill="rgba(244,239,228,0.3)" font-family="monospace" letter-spacing="2">PHOTO</text>
-        </svg>
-      </div>
+      <div class="pick-image-placeholder"></div>
       <h3 class="pick-name">写真には撮れない、<br>あの陽の差し込み方</h3>
       <p class="pick-desc">성수동の裏路地にひっそり佇む、窓が大きいだけの小さなカフェ。インスタには載っていない。でも来たら絶対また来たくなる。</p>
       <div class="pick-location">📍 성수동 · 도보 8분</div>
