@@ -164,6 +164,19 @@
   .hero-right {
     position: relative;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    /* Align the hero image with the bottom spacing of the left content */
+    padding: 140px 120px 100px 120px;
+    z-index: 1;
+  }
+  .hero-right img {
+    width: 60%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0;
   }
   .scroll-hint {
     position: absolute;
@@ -643,8 +656,7 @@
     </div>
   </div>
   <div class="hero-right">
-    <img src="https://raw.githubusercontent.com/ohyesjy/seoul-murmur/main/IMG_9409_transparent.png
-" alt="" style="width:60%; height:auto; object-fit:contain; display:block; margin:auto;"/>
+    <img src="https://raw.githubusercontent.com/ohyesjy/seoul-murmur/main/img_9409_transparent.png" alt=""/>
 
   </div>
   <div class="scroll-hint">SCROLL</div>
