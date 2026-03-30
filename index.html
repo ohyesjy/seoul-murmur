@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seoul Murmur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Noto+Sans+JP:wght@300;400&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F4EFE4;
+    --ink: #1C1C1A;
+    --sage: #7A9E7E;
+    --dusty-orange: #C8714E;
+    --muted-pink: #D4A5A0;
+    --warm-yellow: #D4B96A;
+    --paper: #EDE8DB;
+    --faint: #9B9589;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background: transparent;
+  }
+  nav.scrolled {
+    background: rgba(244,239,228,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(28,28,26,0.08);
+  }
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+  }
+  .logo span {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--faint);
+  }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--faint);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-member {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    border: 1px solid var(--ink);
+    padding: 7px 16px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: all 0.3s;
+  }
+  .nav-member:hover { background: var(--ink); color: var(--cream); }
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 120px 60px 80px 80px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--faint);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    font-family: 'Space Mono', monospace;
+  }
+  .hero-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+  }
+  .hero-title .accent { color: var(--dusty-orange); font-style: italic; }
+  .hero-title .small-text {
+    display: block;
+    font-size: 0.38em;
+    color: var(--faint);
+    letter-spacing: 0.2em;
+    font-style: normal;
+    margin-top: 8px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+  }
+  .hero-desc {
+    font-size: 13px;
+    line-height: 2;
+    color: var(--faint);
+    max-width: 340px;
+    margin-bottom: 48px;
+    letter-spacing: 0.05em;
+  }
+  .hero-cta-group { display: flex; gap: 16px; align-items: center; }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 14px 32px;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  .btn-primary:hover { background: var(--dusty-orange); }
+  .btn-ghost {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--faint);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 2px;
+    transition: color 0.3s;
+  }
+  .btn-ghost:hover { color: var(--ink); }
+  .hero-right {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-circle {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 480px; height: 480px;
+    border-radius: 50%;
+    background: var(--paper);
+    z-index: 0;
+  }
+  .hero-svg {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 380px;
+    animation: floatSlow 6s ease-in-out infinite;
+  }
+  @keyframes floatSlow {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+    50% { transform: translate(-50%, -50%) translateY(-12px); }
+  }
+  .hero-tag {
+    position: absolute;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--faint);
+    font-family: 'Space Mono', monospace;
+  }
+  .hero-tag-1 { top: 20%; right: 8%; }
+  .hero-tag-2 { bottom: 28%; left: 4%; }
+  .hero-tag-3 { bottom: 18%; right: 12%; }
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px; left: 80px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    font-family: 'Space Mono', monospace;
+  }
+  .scroll-hint::before {
+    content: '';
+    display: block;
+    width: 40px; height: 1px;
+    background: var(--faint);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+  @keyframes scrollLine {
+    0%, 100% { width: 40px; opacity: 1; }
+    50% { width: 20px; opacity: 0.4; }
+  }
+  .marquee-section {
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding: 12px 0;
+    overflow: hidden;
+    background: var(--ink);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 48px;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-track span {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--cream);
+    font-family: 'Space Mono', monospace;
+    flex-shrink: 0;
+  }
+  .marquee-track .dot { color: var(--dusty-orange); }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .intro-section {
+    padding: 120px 80px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--faint);
+    text-transform: uppercase;
+    font-family: 'Space Mono', monospace;
+    writing-mode: vertical-rl;
+    align-self: center;
+  }
+  .intro-text {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 300;
+    line-height: 1.9;
+    letter-spacing: 0.05em;
+  }
+  .intro-text em {
+    font-style: normal;
+    border-bottom: 1px solid var(--dusty-orange);
+    color: var(--dusty-orange);
+  }
+  .intro-sub {
+    margin-top: 28px;
+    font-size: 13px;
+    line-height: 2.2;
+    color: var(--faint);
+    max-width: 560px;
+    letter-spacing: 0.05em;
+  }
+  .categories-section { padding: 60px 80px 120px; }
+  .categories-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 48px;
+    border-top: 1px solid var(--ink);
+    padding-top: 24px;
+  }
+  .categories-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    font-weight: 400;
+  }
+  .categories-count {
+    font-size: 10px;
+    color: var(--faint);
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.1em;
+  }
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .cat-card {
+    background: var(--paper);
+    padding: 40px 36px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+    text-decoration: none;
+    color: var(--ink);
+    display: block;
+  }
+  .cat-card:hover { background: var(--ink); color: var(--cream); }
+  .cat-card:hover .cat-number, .cat-card:hover .cat-sub { color: rgba(244,239,228,0.5); }
+  .cat-card:hover .cat-arrow { transform: translateX(6px); opacity: 1; }
+  .cat-card:nth-child(2) { background: var(--sage); }
+  .cat-card:nth-child(2):hover { background: var(--ink); }
+  .cat-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--faint);
+    margin-bottom: 40px;
+    display: block;
+    transition: color 0.4s;
+  }
+  .cat-icon { width: 48px; height: 48px; margin-bottom: 24px; }
+  .cat-name {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .cat-sub {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--faint);
+    line-height: 1.8;
+    transition: color 0.4s;
+  }
+  .cat-arrow {
+    position: absolute;
+    bottom: 36px; right: 36px;
+    font-size: 18px;
+    opacity: 0.3;
+    transition: all 0.4s;
+  }
+  .cat-card.large {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--cream);
+    border: 1px solid var(--ink);
+  }
+  .cat-card.large:hover { background: var(--ink); }
+  .cat-large-content { padding: 40px 36px; }
+  .cat-large-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-left: 1px solid rgba(28,28,26,0.15);
+  }
+  .featured-section {
+    padding: 80px 80px 120px;
+    background: var(--ink);
+    color: var(--cream);
+  }
+  .featured-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 56px;
+    border-top: 1px solid rgba(244,239,228,0.2);
+    padding-top: 24px;
+  }
+  .featured-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: rgba(244,239,228,0.4);
+    font-family: 'Space Mono', monospace;
+  }
+  .featured-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    font-weight: 400;
+  }
+  .featured-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 2px;
+  }
+  .pick-card {
+    background: rgba(244,239,228,0.06);
+    padding: 36px 32px;
+    transition: background 0.3s;
+    cursor: pointer;
+  }
+  .pick-card:hover { background: rgba(244,239,228,0.1); }
+  .pick-card.main { background: var(--dusty-orange); }
+  .pick-card.main:hover { background: #B8613E; }
+  .pick-tag {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: rgba(244,239,228,0.5);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 20px;
+    display: block;
+    text-transform: uppercase;
+  }
+  .pick-card.main .pick-tag { color: rgba(244,239,228,0.7); }
+  .pick-image-placeholder {
+    width: 100%;
+    aspect-ratio: 16/10;
+    background: rgba(244,239,228,0.08);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pick-card.main .pick-image-placeholder { background: rgba(244,239,228,0.15); }
+  .pick-name {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    letter-spacing: 0.03em;
+  }
+  .pick-desc {
+    font-size: 11px;
+    line-height: 1.9;
+    color: rgba(244,239,228,0.5);
+    letter-spacing: 0.05em;
+  }
+  .pick-card.main .pick-desc { color: rgba(244,239,228,0.7); }
+  .pick-location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: rgba(244,239,228,0.4);
+    font-family: 'Space Mono', monospace;
+    margin-top: 20px;
+    letter-spacing: 0.1em;
+  }
+  .membership-section {
+    padding: 100px 80px;
+    background: var(--paper);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .membership-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--faint);
+    text-transform: uppercase;
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 24px;
+  }
+  .membership-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(32px, 4.5vw, 54px);
+    font-weight: 300;
+    line-height: 1.4;
+    letter-spacing: 0.03em;
+    margin-bottom: 32px;
+  }
+  .membership-title .secret { color: var(--dusty-orange); }
+  .membership-desc {
+    font-size: 13px;
+    line-height: 2.2;
+    color: var(--faint);
+    max-width: 400px;
+    margin-bottom: 40px;
+    letter-spacing: 0.05em;
+  }
+  .membership-hint {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--faint);
+    font-family: 'Space Mono', monospace;
+    border-top: 1px solid rgba(28,28,26,0.15);
+    padding-top: 20px;
+    margin-bottom: 32px;
+  }
+  .btn-member {
+    display: inline-block;
+    background: var(--dusty-orange);
+    color: white;
+    padding: 16px 36px;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    transition: all 0.3s;
+    margin-right: 16px;
+  }
+  .btn-member:hover { background: var(--ink); }
+  .membership-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+  }
+  .secret-box {
+    border: 1px solid var(--ink);
+    padding: 48px 40px;
+    background: var(--cream);
+    position: relative;
+    max-width: 320px;
+    width: 100%;
+  }
+  .secret-box::before {
+    content: '会員限定';
+    position: absolute;
+    top: -10px; left: 24px;
+    background: var(--cream);
+    padding: 0 8px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--dusty-orange);
+    font-family: 'Space Mono', monospace;
+  }
+  .secret-emoji { font-size: 32px; margin-bottom: 20px; display: block; }
+  .secret-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+  }
+  .secret-items { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+  .secret-items li {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--faint);
+    padding-left: 16px;
+    position: relative;
+    letter-spacing: 0.05em;
+  }
+  .secret-items li::before { content: '—'; position: absolute; left: 0; color: var(--dusty-orange); }
+  .secret-blur-hint {
+    position: absolute;
+    bottom: -16px; right: -16px;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 8px 16px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    font-family: 'Space Mono', monospace;
+    transform: rotate(-2deg);
+  }
+  .about-strip {
+    padding: 80px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 80px;
+    align-items: end;
+    border-top: 1px solid rgba(28,28,26,0.12);
+  }
+  .about-text {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(18px, 2.2vw, 26px);
+    font-weight: 300;
+    line-height: 2;
+    letter-spacing: 0.05em;
+  }
+  .about-text strong { font-weight: 600; border-bottom: 2px solid var(--sage); }
+  .about-meta {
+    font-size: 11px;
+    line-height: 2;
+    color: var(--faint);
+    letter-spacing: 0.08em;
+    font-family: 'Space Mono', monospace;
+  }
+  footer {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 60px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .footer-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  .footer-logo span {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(244,239,228,0.4);
+  }
+  .footer-tagline {
+    font-size: 11px;
+    color: rgba(244,239,228,0.4);
+    line-height: 1.9;
+    letter-spacing: 0.08em;
+    max-width: 220px;
+  }
+  .footer-col-title {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: rgba(244,239,228,0.4);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a {
+    font-size: 12px;
+    color: rgba(244,239,228,0.6);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--cream); }
+  .footer-bottom {
+    grid-column: 1 / -1;
+    border-top: 1px solid rgba(244,239,228,0.1);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: rgba(244,239,228,0.25);
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.1em;
+  }
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+<nav id="navbar">
+  <a href="#" class="logo">Seoul Murmur <span>こそっと,ソウル</span></a>
+  <ul class="nav-links">
+    <li><a href="#categories">特集</a></li>
+    <li><a href="#picks">찐맛집</a></li>
+    <li><a href="#about">このサイトについて</a></li>
+  </ul>
+  <a href="#membership" class="nav-member">会員限定 →</a>
+</nav>
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">KOREA CURATION FOR JAPANESE WOMEN</p>
+    <h1 class="hero-title">
+      Seoul<br>
+      <span class="accent">Murmur</span>
+      <span class="small-text">こそっと,ソウル — 知る人ぞ知る、あの国の話</span>
+    </h1>
+    <p class="hero-desc">
+      ガイドブックには載っていない。<br>でも、韓国をほんとうに好きな人なら知ってる。<br><br>
+      現地在住の友だちが耳打ちしてくれるような<br>ローカルな韓国のかけらを、ここに集めました。
+    </p>
+    <div class="hero-cta-group">
+      <a href="#categories" class="btn-primary">さっそく覗く</a>
+      <a href="#membership" class="btn-ghost">ひみつの部屋へ</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-circle"></div>
+    <svg class="hero-svg" viewBox="0 0 360 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M175 220 C160 220 148 235 145 255 C142 275 144 300 150 318 C155 330 165 338 178 338 C191 338 201 330 206 318 C212 300 214 275 211 255 C208 235 196 220 181 220 Z" stroke="#1C1C1A" stroke-width="2" fill="#EDE8DB"/>
+      <ellipse cx="178" cy="185" rx="38" ry="42" stroke="#1C1C1A" stroke-width="2" fill="#EDE8DB"/>
+      <path d="M142 172 C138 155 140 138 150 128 C158 120 168 116 178 116 C188 116 200 120 207 130 C215 140 215 156 212 170" stroke="#1C1C1A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="167" cy="182" rx="5" ry="4" fill="#1C1C1A"/>
+      <ellipse cx="189" cy="182" rx="5" ry="4" fill="#1C1C1A"/>
+      <path d="M172 206 C174 209 177 210 178 210 C179 210 182 209 184 206" stroke="#1C1C1A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M148 240 C136 238 118 232 104 228" stroke="#1C1C1A" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M208 240 C220 244 234 254 244 260" stroke="#1C1C1A" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <rect x="242" y="255" width="28" height="22" rx="2" stroke="#1C1C1A" stroke-width="1.8" fill="#F4EFE4"/>
+      <path d="M270 263 C275 263 278 265 278 268 C278 271 275 273 270 273" stroke="#1C1C1A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M250 252 C249 248 251 244 250 240" stroke="#C8714E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M256 252 C255 247 257 243 256 238" stroke="#C8714E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M262 252 C261 248 263 244 262 240" stroke="#C8714E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M90 228 C86 230 82 232 80 238 C78 246 79 256 82 262 C85 268 90 270 96 270 C102 270 107 268 110 262 C113 256 114 246 112 238 C110 232 106 230 102 228 Z" stroke="#1C1C1A" stroke-width="1.8" fill="#F4EFE4"/>
+      <path d="M90 228 C90 220 96 216 96 216 C96 216 102 220 102 228" stroke="#1C1C1A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <text x="88" y="252" font-size="7" fill="#7A9E7E" font-family="serif" letter-spacing="0.5">서울</text>
+      <path d="M150 318 C148 330 148 345 152 355" stroke="#1C1C1A" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M206 318 C208 330 208 345 204 355" stroke="#1C1C1A" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="152" cy="356" rx="12" ry="5" stroke="#1C1C1A" stroke-width="1.5" fill="#1C1C1A"/>
+      <ellipse cx="204" cy="356" rx="12" ry="5" stroke="#1C1C1A" stroke-width="1.5" fill="#1C1C1A"/>
+      <path d="M68 160 L70 154 L72 160 L78 162 L72 164 L70 170 L68 164 L62 162 Z" stroke="#D4B96A" stroke-width="1.2" fill="#D4B96A" opacity="0.7"/>
+      <path d="M290 130 L291.5 125 L293 130 L298 131.5 L293 133 L291.5 138 L290 133 L285 131.5 Z" stroke="#7A9E7E" stroke-width="1" fill="#7A9E7E" opacity="0.6"/>
+      <circle cx="310" cy="175" r="3" fill="#C8714E" opacity="0.5"/>
+      <circle cx="55" cy="210" r="2" fill="#7A9E7E" opacity="0.5"/>
+      <circle cx="178" cy="200" r="155" stroke="#1C1C1A" stroke-width="1" stroke-dasharray="4 6" fill="none" opacity="0.15"/>
+    </svg>
+    <span class="hero-tag hero-tag-1">📍 서울, 성수</span>
+    <span class="hero-tag hero-tag-2">핫플 · 찐맛집</span>
+    <span class="hero-tag hero-tag-3">くらしの中の韓国</span>
+  </div>
+  <div class="scroll-hint">SCROLL</div>
+</section>
+<div class="marquee-section">
+  <div class="marquee-track">
+    <span>ローカルごはん</span><span class="dot">✦</span>
+    <span>숨은 카페</span><span class="dot">✦</span>
+    <span>골목 산책</span><span class="dot">✦</span>
+    <span>편집샵</span><span class="dot">✦</span>
+    <span>웹툰 추천</span><span class="dot">✦</span>
+    <span>ソウルの匂い</span><span class="dot">✦</span>
+    <span>찐맛집만</span><span class="dot">✦</span>
+    <span>知る人ぞ知る</span><span class="dot">✦</span>
+    <span>ローカルごはん</span><span class="dot">✦</span>
+    <span>숨은 카페</span><span class="dot">✦</span>
+    <span>골목 산책</span><span class="dot">✦</span>
+    <span>편집샵</span><span class="dot">✦</span>
+    <span>웹툰 추천</span><span class="dot">✦</span>
+    <span>ソウルの匂い</span><span class="dot">✦</span>
+    <span>찐맛집만</span><span class="dot">✦</span>
+    <span>知る人ぞ知る</span><span class="dot">✦</span>
+  </div>
+</div>
+<section class="intro-section fade-in">
+  <span class="section-label">ABOUT THIS SITE</span>
+  <div>
+    <p class="intro-text">
+      旅行の前に、<em>韓国のにおい</em>を<br>まとっておきたい人へ。<br>
+      帰国してからも、<br>ここに戻ってきたくなる<br>そんな場所にしたかった。
+    </p>
+    <p class="intro-sub">
+      ガイドブックには書いてない。SNSにも流れてこない。<br>
+      でも、現地に住んでいる友だちなら絶対教えてくれるやつ。<br>
+      そういうものだけを、ここに集めています。
+    </p>
+  </div>
+</section>
+<section class="categories-section fade-in" id="categories">
+  <div class="categories-header">
+    <h2 class="categories-title">カテゴリー</h2>
+    <span class="categories-count">06 CATEGORIES</span>
+  </div>
+  <div class="categories-grid">
+    <a class="cat-card" href="#">
+      <span class="cat-number">01</span>
+      <svg class="cat-icon" viewBox="0 0 48 48" fill="none">
+        <path d="M10 32 C10 24 16 16 24 14 C32 12 40 18 40 26 C40 34 34 40 24 40 C16 40 10 36 10 32Z" stroke="#1C1C1A" stroke-width="1.5" fill="none"/>
+        <path d="M18 22 C20 18 26 16 30 20" stroke="#C8714E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <circle cx="32" cy="30" r="2" fill="#C8714E"/>
+      </svg>
+      <span class="cat-name">ごはん</span>
+      <p class="cat-sub">ローカル食堂 / 숨은 카페<br>コンビニ名品 / マート推し商品</p>
+      <span class="cat-arrow">→</span>
+    </a>
+    <a class="cat-card" href="#">
+      <span class="cat-number">02</span>
+      <svg class="cat-icon" viewBox="0 0 48 48" fill="none">
+        <path d="M8 36 L8 16 L24 8 L40 16 L40 36" stroke="#1C1C1A" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+        <path d="M16 36 L16 24 L24 20 L32 24 L32 36" stroke="#1C1C1A" stroke-width="1.5" fill="none"/>
+        <circle cx="34" cy="12" r="4" stroke="#7A9E7E" stroke-width="1.5" fill="none"/>
+      </svg>
+      <span class="cat-name">散歩・空間</span>
+      <p class="cat-sub">골목 / 산책코스<br>소품점 / 편집샵 / 개인 카페</p>
+      <span class="cat-arrow">→</span>
+    </a>
+    <a class="cat-card" href="#">
+      <span class="cat-number">03</span>
+      <svg class="cat-icon" viewBox="0 0 48 48" fill="none">
+        <rect x="10" y="14" width="28" height="22" rx="2" stroke="#1C1C1A" stroke-width="1.5" fill="none"/>
+        <path d="M16 14 L16 10 C16 8 18 7 20 8 L28 8 C30 7 32 8 32 10 L32 14" stroke="#1C1C1A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M18 24 L22 28 L30 20" stroke="#D4B96A" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="cat-name">ショッピング</span>
+      <p class="cat-sub">小さなお店 / 편집샵<br>マートアイテム</p>
+      <span class="cat-arrow">→</span>
+    </a>
+    <a class="cat-card large" href="#">
+      <div class="cat-large-content">
+        <span class="cat-number">04 · 05</span>
+        <span class="cat-name">コンテンツ &<br>YouTube</span>
+        <p class="cat-sub">ウェブトゥーン / 웹소설<br>日本語で楽しめるものを厳選<br>한국인 브이로그 / 핫플 채널</p>
+        <span class="cat-arrow">→</span>
+      </div>
+      <div class="cat-large-visual">
+        <svg viewBox="0 0 140 120" fill="none" width="140">
+          <rect x="45" y="10" width="50" height="80" rx="6" stroke="#1C1C1A" stroke-width="1.5" fill="#EDE8DB"/>
+          <rect x="52" y="20" width="36" height="50" stroke="#1C1C1A" stroke-width="1" fill="white"/>
+          <rect x="54" y="22" width="32" height="14" stroke="#C8714E" stroke-width="0.8" fill="none" opacity="0.5"/>
+          <rect x="54" y="38" width="14" height="14" stroke="#7A9E7E" stroke-width="0.8" fill="none" opacity="0.5"/>
+          <rect x="70" y="38" width="16" height="14" stroke="#D4B96A" stroke-width="0.8" fill="none" opacity="0.5"/>
+          <circle cx="70" cy="82" r="4" stroke="#1C1C1A" stroke-width="1" fill="none"/>
+          <circle cx="108" cy="55" r="16" stroke="#1C1C1A" stroke-width="1.2" fill="#F4EFE4" opacity="0.8"/>
+          <path d="M104 48 L116 55 L104 62 Z" fill="#C8714E"/>
+        </svg>
+      </div>
+    </a>
+    <a class="cat-card" href="#">
+      <span class="cat-number">06</span>
+      <svg class="cat-icon" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="16" stroke="#1C1C1A" stroke-width="1.5" fill="none"/>
+        <path d="M24 8 L24 24 L34 32" stroke="#1C1C1A" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="cat-name">実用情報</span>
+      <p class="cat-sub">날씨 / 교통 / 공휴일<br>旅行のヒントあれこれ</p>
+      <span class="cat-arrow">→</span>
+    </a>
+  </div>
+</section>
+<section class="featured-section fade-in" id="picks">
+  <div class="featured-header">
+    <span class="featured-label">EDITOR'S PICK</span>
+    <h2 class="featured-title">今週の찐맛집・핫플</h2>
+  </div>
+  <div class="featured-grid">
+    <div class="pick-card main">
+      <span class="pick-tag">CAFÉ · 성수동</span>
+      <div class="pick-image-placeholder">
+        <svg viewBox="0 0 200 100" fill="none" width="180">
+          <rect x="20" y="20" width="160" height="60" rx="4" stroke="rgba(244,239,228,0.4)" stroke-width="1" fill="rgba(244,239,228,0.08)"/>
+          <text x="85" y="55" font-size="9" fill="rgba(244,239,228,0.3)" font-family="monospace" letter-spacing="2">PHOTO</text>
+        </svg>
+      </div>
+      <h3 class="pick-name">写真には撮れない、<br>あの陽の差し込み方</h3>
+      <p class="pick-desc">성수동の裏路地にひっそり佇む、窓が大きいだけの小さなカフェ。インスタには載っていない。でも来たら絶対また来たくなる。</p>
+      <div class="pick-location">📍 성수동 · 도보 8분</div>
+    </div>
+    <div class="pick-card">
+      <span class="pick-tag">FOOD · 망원동</span>
+      <div class="pick-image-placeholder"></div>
+      <h3 class="pick-name">おばあちゃんの手でしか<br>出せない味</h3>
+      <p class="pick-desc">看板もない、SNSにも出てこない。でも地元の人が昼に行列つくる식당。</p>
+      <div class="pick-location">📍 망원동</div>
+    </div>
+    <div class="pick-card">
+      <span class="pick-tag">SHOP · 익선동</span>
+      <div class="pick-image-placeholder"></div>
+      <h3 class="pick-name">センスある人が<br>こっそり通う雑貨店</h3>
+      <p class="pick-desc">익선동の한옥골목の中。日本語のzineまで置いてある不思議なお店。</p>
+      <div class="pick-location">📍 익선동</div>
+    </div>
+  </div>
+</section>
+<section class="membership-section fade-in" id="membership">
+  <div class="membership-left">
+    <p class="membership-eyebrow">MEMBERS ONLY</p>
+    <h2 class="membership-title">
+      <span class="secret">私だけの韓国</span><br>
+      ひみつの部屋、<br>あります。
+    </h2>
+    <p class="membership-hint">会員限定のひみつの部屋があります — 知ってる人だけ、どうぞ。</p>
+    <p class="membership-desc">
+      韓国をほんとうに好きな人たちだけが集まる場所。<br>
+      「こんな場所知ってる？」って運営者に直接DM感覚で聞けたり。<br><br>
+      友だちに話しかけるみたいな、そんな空間です。
+    </p>
+    <a href="#" class="btn-member">無料で入会する</a>
+    <a href="#" class="btn-ghost">もっと詳しく</a>
+  </div>
+  <div class="membership-right">
+    <div class="secret-box">
+      <span class="secret-emoji">🔑</span>
+      <h3 class="secret-title">「私だけの韓国」<br>でできること</h3>
+      <ul class="secret-items">
+        <li>絵日記スタイルで숨은 핫플を投稿</li>
+        <li>운영자에게 DM感覚で質問できる</li>
+        <li>会員限定の厳選リストが読める</li>
+        <li>先行情報・非公開コンテンツへのアクセス</li>
+        <li>メンバーだけのウェルカムメッセージ</li>
+      </ul>
+      <div class="secret-blur-hint">✦ 入会無料</div>
+    </div>
+  </div>
+</section>
+<section class="about-strip fade-in" id="about">
+  <p class="about-text">
+    「韓国に住んでいる<strong>日本人の友だち</strong>が<br>
+    耳打ちしてくれるような情報」——<br>
+    それが、このサイトのつくりたいものです。
+  </p>
+  <div class="about-meta">
+    운영자 노트<br><br>
+    韓国在住 / 日本語ネイティブ<br>
+    서울に暮らして7年目<br>
+    ローカルが好き、行列が嫌い<br><br>
+    → <a href="#" style="color:#C8714E; text-decoration:none;">もっと読む</a>
+  </div>
+</section>
+<footer>
+  <div>
+    <p class="footer-logo">Seoul Murmur<br><span>こそっと,ソウル</span></p>
+    <p class="footer-tagline">
+      ガイドブックには載っていない。<br>
+      でも、好きな人なら知ってる。<br>
+      韓国のかけらを届けます。
+    </p>
+  </div>
+  <div>
+    <p class="footer-col-title">CONTENTS</p>
+    <ul class="footer-links">
+      <li><a href="#">ごはん</a></li>
+      <li><a href="#">散歩・空間</a></li>
+      <li><a href="#">ショッピング</a></li>
+      <li><a href="#">コンテンツ</a></li>
+      <li><a href="#">YouTube</a></li>
+      <li><a href="#">実用情報</a></li>
+    </ul>
+  </div>
+  <div>
+    <p class="footer-col-title">MEMBERS</p>
+    <ul class="footer-links">
+      <li><a href="#">私だけの韓国 →</a></li>
+      <li><a href="#">絵日記を投稿する</a></li>
+      <li><a href="#">運営者に聞く</a></li>
+      <li><a href="#">会員登録</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Seoul Murmur</span>
+    <span>MADE WITH 찐 LOVE FROM 서울</span>
+  </div>
+</footer>
+<script>
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+  const fadeEls = document.querySelectorAll('.fade-in');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1 });
+  fadeEls.forEach(el => observer.observe(el));
+  document.querySelectorAll('.hero-left > *').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = `opacity 0.8s ease ${i*0.12}s, transform 0.8s ease ${i*0.12}s`;
+    setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 200 + i*120);
+  });
+</script>
+</body>
+</html>
